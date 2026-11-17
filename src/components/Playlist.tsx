@@ -8,6 +8,30 @@ const formatDuration = (ms: number) => {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 };
 
+/**
+ * Spotify's mosaic covers (mosaic.scdn.co/<size>/<four 40-char image ids>) are unreliable, so a
+ * mosaic is rebuilt here from its four album covers on i.scdn.co. Other covers are used as they are.
+ */
+function coverImages(cover: string) {
+  const ids = cover.match(/^https:\/\/mosaic\.scdn\.co\/\d+\/([0-9a-f]{160})$/)?.[1].match(/.{40}/g);
+  return ids ? ids.map((id) => `https://i.scdn.co/image/${id}`) : [cover];
+}
+
+function Cover({ cover }: { cover: string }) {
+  const images = coverImages(cover);
+  const single = images.length === 1;
+  return (
+    <span
+      aria-hidden="true"
+      className={`grid h-16 w-16 shrink-0 overflow-hidden rounded-md border border-border ${single ? "" : "grid-cols-2"}`}
+    >
+      {images.map((src) => (
+        <Image key={src} src={src} alt="" width={single ? 64 : 32} height={single ? 64 : 32} unoptimized className="h-full w-full object-cover" />
+      ))}
+    </span>
+  );
+}
+
 function Equalizer() {
   return (
     <span aria-hidden="true" className="flex h-3 items-end gap-0.5">
@@ -39,16 +63,7 @@ export async function Playlist() {
   return (
     <div className="mt-4 rounded-lg border border-border bg-surface p-5">
       <div className="flex items-center gap-4">
-        {playlist?.cover ? (
-          <Image
-            src={playlist.cover}
-            alt=""
-            width={64}
-            height={64}
-            unoptimized
-            className="h-16 w-16 shrink-0 rounded-md border border-border object-cover"
-          />
-        ) : null}
+        {playlist.cover ? <Cover cover={playlist.cover} /> : null}
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-2 font-mono text-xs text-muted">
             <Equalizer />

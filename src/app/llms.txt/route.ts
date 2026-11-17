@@ -18,6 +18,7 @@ const list = (items: readonly string[]) => items.map((i) => `- ${i}`).join("\n")
 
 function build() {
   const visited = places.filter((p) => p.status === "visited").map((p) => p.name);
+  const nextCities = travel.cities.filter((c) => places.find((p) => p.id === c.country)?.status === "goal").map((c) => c.name);
   return `# ${site.name}
 
 > ${site.description}
@@ -38,7 +39,7 @@ ${about.paragraphs.join("\n\n")}
 - Home city: ${travel.home.name}
 - Countries visited: ${visited.join(", ")}
 - Cities visited: ${travel.cities.filter((c) => places.find((p) => p.id === c.country)?.status === "visited").map((c) => c.name).join(", ")}
-- Next destinations: ${travel.cities.filter((c) => places.find((p) => p.id === c.country)?.status === "goal").map((c) => c.name).join(", ")}
+${nextCities.length ? `- Next destinations: ${nextCities.join(", ")}` : ""}
 
 ## Experience
 

@@ -144,7 +144,7 @@ export function PlacesMap() {
             ref={svgRef}
             viewBox={`0 0 ${map.width} ${map.height}`}
             role="img"
-            aria-label={`Map of trips from ${map.home.name}${home ? `, ${home.name}` : ""}. Visited: ${visited.map((p) => p.name).join(", ")}. Next destinations: ${goals.map((p) => p.name).join(" and ")}.`}
+            aria-label={`Map of trips from ${map.home.name}${home ? `, ${home.name}` : ""}. Visited: ${visited.map((p) => p.name).join(", ")}.${goals.length ? ` Next destinations: ${goals.map((p) => p.name).join(" and ")}.` : ""}`}
             className="block h-auto w-full"
             onClick={() => setSelected(null)}
           >
@@ -259,10 +259,12 @@ export function PlacesMap() {
             <span aria-hidden="true" className="h-2 w-2 rounded-full bg-accent" />
             Visited
           </li>
-          <li className="flex items-center gap-2">
-            <span aria-hidden="true" className="h-2 w-2 rotate-45 border border-accent" />
-            Next destination
-          </li>
+          {goals.length > 0 ? (
+            <li className="flex items-center gap-2">
+              <span aria-hidden="true" className="h-2 w-2 rotate-45 border border-accent" />
+              Next destination
+            </li>
+          ) : null}
         </ul>
       </div>
 
